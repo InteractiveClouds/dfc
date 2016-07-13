@@ -1,0 +1,10 @@
+tmp/*
+node_modules/
+lib/auth/.auth.conf
+logs/*
+npm-debug.log
+tasks
+.idea/
+zip/data
+
+test.js

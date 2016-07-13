@@ -1,0 +1,9 @@
+{
+  "name": "logger",
+  "version": "0.0.1",
+  "main": "log.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {}
+}

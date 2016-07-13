@@ -1,0 +1,45 @@
+{
+  "name": "dreamface-compiler",
+  "description": "DreamFace Application Compiler",
+  "version": "1.0.2",
+  "contributors": [
+    "Volodymyr Litichevskij <vova@interactive-clouds.com>",
+    "Mikhail Tarasov <mikhail@interactive-clouds.com>",
+    "Alexey Nazarenko <alexey@interactive-clouds.com>",
+    "Olivier Poupeney <olivier@interactive-clouds.com>"
+  ],
+  "keywords": [
+    "dreamface",
+    "framework",
+    "web",
+    "mobile",
+    "app",
+    "cloud",
+    "compiler"
+  ],
+  "repository": "opoupeney/dfc",
+  "main": "dfc.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "archiver": "^0.14.4",
+    "clean-css": "^3.3.6",
+    "crypto-js": "*",
+    "decompress-zip": "^0.2.0",
+    "express": "*",
+    "form-data": "^0.2.0",
+    "glob": "^5.0.14",
+    "http": "0.0.0",
+    "jade": "1.5.0",
+    "mkdirp": "^0.5.1",
+    "oauth": ">= 0.9.10",
+    "oauth-signature": "*",
+    "q": "*",
+    "q-io": "*",
+    "replace": "^0.3.0",
+    "request": "2.58.0",
+    "socket.io": "*",
+    "uglify-js": "^2.4.23"
+  }
+}
