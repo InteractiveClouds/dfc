@@ -15,6 +15,7 @@ var Q       = require('q'),
     Request = require('./request'),
     log     = new (require('./lib/utils/log')).Instance({label:'CLOUD'}),
     utils   = require('./utils'),
+    config  = require('./config'),
     unzip = require('./unzip').decompress,
     path  = require('path'),
     http = require('http'),
@@ -244,7 +245,7 @@ _Server.prototype.getServerInfo = function () {
                     file.end(function(){
                         var obj = {
                             path : 'templates'+that.info['server-uuid']+'.zip',
-                            dest_path : path.join(__dirname, 'tmp', that.info['server-uuid'])
+                            dest_path : path.join(__dirname, config.tmp_dir, that.info['server-uuid'])
                         }
                         return unzip(obj).then(function(){
                             fs.unlinkSync('templates'+that.info['server-uuid']+'.zip');

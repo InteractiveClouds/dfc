@@ -18,6 +18,7 @@ var out = module.exports = {},
 
 out.init = function ( _localSettings ) {
     localSettings = _localSettings;
+
     return out;
 };
 
@@ -39,6 +40,9 @@ out.start = function () {
         theServer = require('./theServer');
 
         _Log.init.stdout(CFG.logging.stdout);
+
+    if (!CFG.target_dir)  throw('You must set target_dir in config!');
+    if (!CFG.tmp_dir)  throw('You must set tmp_dir in config!');
 
     cloud.init()
     .then(theServer.start)

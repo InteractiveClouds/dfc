@@ -3,7 +3,8 @@ module.exports = {
     server_host : 'localhost',
     server_port : 3100,
 
-    target_dir : 'tasks',
+    target_dir : '', // For example 'tasks'
+    tmp_dir : '', // For example 'tmp'
     dfx_path   : '../dreamface',
 
     logging : {
