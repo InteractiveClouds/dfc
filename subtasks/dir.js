@@ -25,6 +25,11 @@ exports.Constr = function ( o ) {
 
     this.descr = (this.createDir ? 'creating' : 'filling' ) +
         ' directory ' + this.path;
+
+    if ( !o.name ) this.errors.push(this.log.error(
+        'DESCR: ' + this.descr + ',' +
+        ' ERROR: empty dir name'
+    ));
 };
 
 exports.start = function () {
