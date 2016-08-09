@@ -479,7 +479,7 @@ module.exports = function theSchema () {
                     },
                     {
                         type : 'dir',
-                        name : task.server.settings.resources_deploy_path,
+                        name : resources,
                         cont : [
                             // app resources
                             {
@@ -841,26 +841,26 @@ module.exports = function theSchema () {
             type : 'minify',
             rules : [
                 {
-                    src: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, task.root.info.appid, 'javascript'),
-                    dest: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, task.root.info.appid, 'javascript'),
+                    src: path.join(task.root.path, 'app', resources, task.root.info.appid, 'javascript'),
+                    dest: path.join(task.root.path, 'app', resources, task.root.info.appid, 'javascript'),
                     ext : 'js',
                     min_prefix : MIN_PREFIX
                 },
                 {
-                    src: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, '_shared', 'javascript'),
-                    dest: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, '_shared', 'javascript'),
+                    src: path.join(task.root.path, 'app', resources, '_shared', 'javascript'),
+                    dest: path.join(task.root.path, 'app', resources, '_shared', 'javascript'),
                     ext : 'js',
                     min_prefix : MIN_PREFIX
                 },
                 {
-                    src: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, task.root.info.appid, 'stylesheets'),
-                    dest: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, task.root.info.appid, 'stylesheets'),
+                    src: path.join(task.root.path, 'app', resources, task.root.info.appid, 'stylesheets'),
+                    dest: path.join(task.root.path, 'app', resources, task.root.info.appid, 'stylesheets'),
                     ext : 'css',
                     min_prefix : MIN_PREFIX
                 },
                 {
-                    src: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, '_shared', 'stylesheets'),
-                    dest: path.join(task.root.path, 'app', task.server.settings.resources_deploy_path, '_shared', 'stylesheets'),
+                    src: path.join(task.root.path, 'app', resources, '_shared', 'stylesheets'),
+                    dest: path.join(task.root.path, 'app', resources, '_shared', 'stylesheets'),
                     ext : 'css',
                     min_prefix : MIN_PREFIX
                 }

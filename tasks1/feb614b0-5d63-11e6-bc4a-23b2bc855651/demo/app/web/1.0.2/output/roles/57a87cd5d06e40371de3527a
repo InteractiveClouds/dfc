@@ -1,0 +1,8 @@
+{
+    "name": "shared_guest",
+    "application": "dfx-common-components",
+    "_id": "57a87cd5d06e40371de3527a",
+    "description": "",
+    "unremovable": true,
+    "rights": []
+}
