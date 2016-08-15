@@ -244,7 +244,7 @@ _Server.prototype.getServerInfo = function () {
                     file.end(function(){
                         var obj = {
                             path : 'templates'+that.info['server-uuid']+'.zip',
-                            dest_path : path.join(__dirname, CFG.tmp_dir, that.info['server-uuid'])
+                            dest_path : path.join(CFG.tmp_dir, that.info['server-uuid'])
                         }
                         return unzip(obj).then(function(){
                             fs.unlinkSync('templates'+that.info['server-uuid']+'.zip');
