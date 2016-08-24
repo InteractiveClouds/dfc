@@ -18,13 +18,15 @@ var Q     = require('q'),
     config = require('../config.js');
 
 var MIN_PREFIX = 'min',
-    TMP_FLDR = config.tmp_dir;
+    PATH_TO_GEN_DEV_FILES = config.tmp_dir;
 
 
 module.exports = function theSchema () {
 
-    var task = this,
-        promises = [];
+    const
+        task = this,
+        promises = [],
+        PATH_TO_DEV_FILES = path.join(PATH_TO_GEN_DEV_FILES, task.server.name);
 
     task.root.data = {};
 
@@ -213,10 +215,7 @@ module.exports = function theSchema () {
                                     isPathAbsolute : true,
                                     src : [
                                         path.join(
-                                            __dirname,
-                                            '..',
-                                            TMP_FLDR,
-                                            task.server.name,
+                                            PATH_TO_DEV_FILES,
                                             'build/fonts'
                                         )
                                     ]
@@ -232,10 +231,7 @@ module.exports = function theSchema () {
                                     isPathAbsolute : true,
                                     src : [
                                         path.join(
-                                            __dirname,
-                                            '..',
-                                            TMP_FLDR,
-                                            task.server.name,
+                                            PATH_TO_DEV_FILES,
                                             'build/img'
                                         )
                                     ]
@@ -245,10 +241,7 @@ module.exports = function theSchema () {
                                     isPathAbsolute : true,
                                     src : [
                                         path.join(
-                                            __dirname,
-                                            '..',
-                                            TMP_FLDR,
-                                            task.server.name,
+                                            PATH_TO_DEV_FILES,
                                             'build/images'
                                         )
                                     ]
@@ -268,10 +261,7 @@ module.exports = function theSchema () {
                                             isPathAbsolute : true,
                                             src : [
                                                 path.join(
-                                                    __dirname,
-                                                    '..',
-                                                    TMP_FLDR,
-                                                    task.server.name,
+                                                    PATH_TO_DEV_FILES,
                                                     'build/css/'
                                                 )
                                             ]
@@ -316,10 +306,7 @@ module.exports = function theSchema () {
                                             isPathAbsolute : true,
                                             src : [
                                                 path.join(
-                                                    __dirname,
-                                                    '..',
-                                                    TMP_FLDR,
-                                                    task.server.name,
+                                                    PATH_TO_DEV_FILES,
                                                     'build/js/'
                                                 )
                                             ]
@@ -344,11 +331,8 @@ module.exports = function theSchema () {
                                     isPathAbsolute : true,
                                     src : [
                                         path.join(
-                                            __dirname,
-                                            '..',
-                                            TMP_FLDR,
-                                            task.server.name,
-                                            'build/gcontrols/'
+                                            PATH_TO_DEV_FILES,
+                                            'build/gcontrols/web'
                                         )
                                     ]
                                 }
@@ -467,10 +451,7 @@ module.exports = function theSchema () {
                                             }
 
                                             var templPath = path.resolve(
-                                                __dirname,
-                                                '..',
-                                                TMP_FLDR,
-                                                task.server.name,
+                                                PATH_TO_DEV_FILES,
                                                 'templates',
                                                 'Basic',
                                                 'basic_index_mobile.jade'
@@ -507,10 +488,7 @@ module.exports = function theSchema () {
                             cont : task.root.data.appitem.then(function(appitem) {
 
                                 var templPath = path.resolve(
-                                    __dirname,
-                                    '..',
-                                    TMP_FLDR,
-                                    task.server.name,
+                                    PATH_TO_DEV_FILES,
                                     'templates',
                                     'Basic',
                                     'page.jade'
@@ -542,10 +520,7 @@ module.exports = function theSchema () {
                             cont : task.root.data.appitem.then(function(appitem) {
 
                                 var templPath = path.resolve(
-                                    __dirname,
-                                    '..',
-                                    TMP_FLDR,
-                                    task.server.name,
+                                    PATH_TO_DEV_FILES,
                                     'templates',
                                     'Basic',
                                     'config.jade'
