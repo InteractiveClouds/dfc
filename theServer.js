@@ -39,6 +39,24 @@ module.exports.start = function () {
 
     return http.createServer(app).listen(app.get('port'), CFG.server_host, function(){
         log.info('the server is listening port ' + CFG.server_port);
+
+        if ( !CFG.notify_on_start.url ) return;
+
+        const url = CFG.notify_on_start.url +
+                '?servertype=dfc' +
+                '&notifyid=' + CFG.notify_on_start.id
+
+        log.info('sending startup notification to ', url);
+
+        require('./lib/authRequest').getRequestInstance({}).get({
+            url : url
+        })
+        .then(function(){
+            log.ok('notifications sent');
+        })
+        .fail(function(error){
+            log.fatal('could not notify after start. error : ', error);
+        });
     });
 
     return server;

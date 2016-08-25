@@ -17,5 +17,10 @@ module.exports = {
 
     pingInterval : 5000,
 
+    notify_on_start : {
+        url : '',
+        id  : ''
+    },
+
     dfx_servers : []
 }

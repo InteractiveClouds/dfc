@@ -71,7 +71,15 @@ function overwriteSettings ( a, b, path ) {
     for ( var param in b ) {
 
         if ( !a.hasOwnProperty(param) ) {
-            throw('Unknown parameter ' + path.concat(param).join('.'));
+            console.log(
+                'WARN   : Unknown parameter ' +
+                path.concat(param).join('.') +
+                ' is added to SETTINGS.'
+            );
+
+            a[param] = b[param];
+
+            continue;
         }
 
         if ( typeof b[param] !== 'object' || b[param] instanceof Array ) {
