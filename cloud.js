@@ -304,18 +304,15 @@ Server.prototype.get = function ( relUrl, query ) {
         url = out[this.name].getUrl(relUrl, query);
 
     return server.ar.get(url).fail(function (error) {
-        console.log(error);
-        //// -----------------------------------------------------\
-        //// TODO it is a crutch added cause of
-        //// infinite requests sending if there is an server error
-        //if ( error instanceof ServerError ) return Q.reject();
-        //// -----------------------------------------------------/
-        //
-        //if ( error && error.code ) server.caughtInactive();
-        //
-        //return utils.waitForEither([out[serverName]])
-        //    .then(function(){
-        //        out[serverName].get(relUrl, query)});
+        log.error(error);
+
+        if ( error instanceof ServerError ) return Q.reject();
+
+        if ( error && error.code ) server.caughtInactive();
+
+        return utils.waitForEither([out[serverName]])
+            .then(function(){
+                out[serverName].get(relUrl, query)});
     });
 };
 
