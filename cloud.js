@@ -304,7 +304,7 @@ Server.prototype.get = function ( relUrl, query ) {
         url = out[this.name].getUrl(relUrl, query);
 
     return server.ar.get(url).fail(function (error) {
-        log.fatal(error);
+        console.log(error);
         //// -----------------------------------------------------\
         //// TODO it is a crutch added cause of
         //// infinite requests sending if there is an server error
