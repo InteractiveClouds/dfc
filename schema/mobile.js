@@ -327,13 +327,18 @@ module.exports = function theSchema () {
                             name : 'gcontrols',
                             cont : [
                                 {
-                                    type : 'copy',
-                                    isPathAbsolute : true,
-                                    src : [
-                                        path.join(
-                                            PATH_TO_DEV_FILES,
-                                            'build/gcontrols/web'
-                                        )
+                                    type : 'dir',
+                                    name : 'web',
+                                    cont : [
+                                        {
+                                            type : 'copy',
+                                            isPathAbsolute : true,
+                                            src : [
+                                                path.join(
+                                                    PATH_TO_DEV_FILES,
+                                                    'build/gcontrols/web'
+                                                )
+                                            ]}
                                     ]
                                 }
                             ]
