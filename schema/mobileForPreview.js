@@ -15,7 +15,7 @@ var Q     = require('q'),
     path  = require('path'),
     URL   = require('url'),
     jade  = require('jade');
-    config = require('../config.js');
+config = require('../config.js');
 
 var MIN_PREFIX = 'min',
     PATH_TO_GEN_DEV_FILES = config.tmp_dir;
@@ -27,23 +27,6 @@ module.exports = function theSchema () {
         task = this,
         promises = [],
         PATH_TO_DEV_FILES = path.join(PATH_TO_GEN_DEV_FILES, task.server.name);
-
-    function renderView( definition ){
-        var D = Q.defer();
-        request({
-            method : 'POST',
-            uri: task.server.settings.EXTERNAL_URL + '/studio/view/render',
-            json : {'view_source': JSON.parse(definition)}
-
-        }, function (error, response, body) {
-            if (error) {
-                D.reject(error);
-            } else {
-                D.resolve(body);
-            }
-        })
-        return D.promise;
-    }
 
     task.root.data = {};
 
@@ -356,7 +339,7 @@ module.exports = function theSchema () {
                                                     'build/gcontrols/web'
                                                 )
                                             ]}
-                                    ]
+                                        ]
                                 }
                             ]
                         },
@@ -397,26 +380,14 @@ module.exports = function theSchema () {
                         {
                             type : 'dir',
                             name : 'views',
-                            cont : task.root.input.widgets.map(function(wdgt){
-                                return {
-                                    type : 'dir',
-                                    name : wdgt.name,
-                                    cont : renderView( wdgt.definition.src ).then(function(res){
-                                        var tasks = Object.keys(res);
-                                        tasks.push('json');
-                                        return tasks.map(function(key){
-                                            return (key != 'json') ?  {
-                                                type : 'file',
-                                                name : wdgt.name + '_' + key + '.html',
-                                                cont : res[key]
-                                            } : {
-                                                type : 'file',
-                                                name : wdgt.name + '.json',
-                                                cont : JSON.stringify(wdgt.definition)
-                                            }
-                                        })
-                                    })
-                                }
+                            cont : task.root.data.appitem.then(function(appitem){
+                                return task.root.input.widgets.map(function(wdgt){
+                                    return {
+                                        type : 'file',
+                                        name : wdgt.name + '.json',
+                                        cont : JSON.stringify(wdgt.definition)
+                                    }
+                                })
                             })
                         },
                         {
@@ -449,7 +420,7 @@ module.exports = function theSchema () {
                             type : 'file',
                             name : 'login.html',
                             cont : task.root.data.appitem.then(function(appitem) {
-                                return appitem.templates.login_page_mobile
+                                return appitem.templates.login_page_mobile.replace("dfx_server:","dfx_server_test:")
                             })
                         },
                         {
@@ -1062,3 +1033,4 @@ function loadWidgetClassesFromMemory (arr_widgets, app_widgets_map) {
         arr_widgets[i].definition = app_widgets_map[arr_widgets[i].name];
     }
 };
+

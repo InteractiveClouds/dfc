@@ -17,6 +17,7 @@ const
     URL   = require('url'),
     jade  = require('jade'),
     config = require('../config.js');
+    request = require('request');
 
 const
     MIN_PREFIX = 'min',
@@ -29,6 +30,24 @@ module.exports = function theSchema () {
         task = this,
         PATH_TO_DEV_FILES = path.join(PATH_TO_GEN_DEV_FILES, task.server.name),
         promises = [];
+
+
+    function renderView( definition ){
+        var D = Q.defer();
+        request({
+            method : 'POST',
+            uri: task.server.settings.EXTERNAL_URL + '/studio/view/render',
+            json : {'view_source': JSON.parse(definition)}
+
+        }, function (error, response, body) {
+            if (error) {
+                D.reject(error);
+            } else {
+                D.resolve(body);
+            }
+        })
+        return D.promise;
+    }
 
     task.root.data = {};
 
@@ -361,14 +380,26 @@ module.exports = function theSchema () {
                     {
                         type : 'dir',
                         name : 'views',
-                        cont : task.root.data.appitem.then(function(appitem){
-                            return task.root.input.widgets.map(function(wdgt){
-                                return {
-                                    type : 'file',
-                                    name : wdgt.name + '.json',
-                                    cont : JSON.stringify(wdgt.definition)
-                                }
-                            })
+                        cont : task.root.input.widgets.map(function(wdgt){
+                            return {
+                                type : 'dir',
+                                name : wdgt.name,
+                                cont : renderView( wdgt.definition.src ).then(function(res){
+                                        var tasks = Object.keys(res);
+                                        tasks.push('json');
+                                        return tasks.map(function(key){
+                                            return (key != 'json') ?  {
+                                                type : 'file',
+                                                name : wdgt.name + '_' + key + '.html',
+                                                cont : res[key]
+                                            } : {
+                                                type : 'file',
+                                                name : wdgt.name + '.json',
+                                                cont : JSON.stringify(wdgt.definition)
+                                            }
+                                        })
+                                })
+                            }
                         })
                     },
                     {
