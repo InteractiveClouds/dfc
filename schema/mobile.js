@@ -28,6 +28,23 @@ module.exports = function theSchema () {
         promises = [],
         PATH_TO_DEV_FILES = path.join(PATH_TO_GEN_DEV_FILES, task.server.name);
 
+    function renderView( definition ){
+        var D = Q.defer();
+        request({
+            method : 'POST',
+            uri: task.server.settings.EXTERNAL_URL + '/studio/view/render',
+            json : {'view_source': JSON.parse(definition)}
+
+        }, function (error, response, body) {
+            if (error) {
+                D.reject(error);
+            } else {
+                D.resolve(body);
+            }
+        })
+        return D.promise;
+    }
+
     task.root.data = {};
 
     promises[0] = task.root.data.appitem = task.server.get(
@@ -380,14 +397,26 @@ module.exports = function theSchema () {
                         {
                             type : 'dir',
                             name : 'views',
-                            cont : task.root.data.appitem.then(function(appitem){
-                                return task.root.input.widgets.map(function(wdgt){
-                                    return {
-                                        type : 'file',
-                                        name : wdgt.name + '.json',
-                                        cont : JSON.stringify(wdgt.definition)
-                                    }
-                                })
+                            cont : task.root.input.widgets.map(function(wdgt){
+                                return {
+                                    type : 'dir',
+                                    name : wdgt.name,
+                                    cont : renderView( wdgt.definition.src ).then(function(res){
+                                        var tasks = Object.keys(res);
+                                        tasks.push('json');
+                                        return tasks.map(function(key){
+                                            return (key != 'json') ?  {
+                                                type : 'file',
+                                                name : wdgt.name + '_' + key + '.html',
+                                                cont : res[key]
+                                            } : {
+                                                type : 'file',
+                                                name : wdgt.name + '.json',
+                                                cont : JSON.stringify(wdgt.definition)
+                                            }
+                                        })
+                                    })
+                                }
                             })
                         },
                         {
