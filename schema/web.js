@@ -745,7 +745,7 @@ function compileAppJs ( task ) {
         mobile_push_listener = '',
         platform = task.root.info.platform,
         js_file_content = '/* Application Scripts */\r\n\r\n',
-        aScript  = 'var ' + appname + ' = angular.module(\'' + appname + '\', [ \'ngRoute\', \'dfxAppRuntime\', \'dfxAppServices\', \'dfxGControls\', ';
+        aScript  = 'var ' + appname + ' = angular.module(\'' + appname + '\', [ \'ngRoute\', \'dfxAppRuntime\', \'dfxAppServices\', \'dfxGCC\', ';
 
     var promise = task.root.input.widgets.map(function(wdgt){
 
@@ -758,6 +758,10 @@ function compileAppJs ( task ) {
             wdgt.name + '.html\';';
 
         wNames.push('\'' + wdgt.name + '\'');
+
+        /* Push all included modules here */
+
+        wNames.push('\'dfxGCC\'');
     });
 
     var promise_screens = task.root.input.screens.map(function(scr){

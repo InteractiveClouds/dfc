@@ -755,6 +755,10 @@ function compileAppJs ( task ) {
         wdgt.name + '.html\';';
 
         wNames.push('\'' + wdgt.name + '\'');
+
+        /* Push all included modules here */
+
+        wNames.push('\'dfxGCC\'');
     });
 
     var promise_screens = task.root.input.screens.map(function(scr){
