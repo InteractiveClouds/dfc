@@ -133,6 +133,19 @@ module.exports = function theSchema () {
     promises.push(task.runSubTask({
         type  : 'input',
         kind  : 'multi',
+        name  : 'gc_templates',
+        uFld  : '_id',
+        url   : 'api/gc_templates/getAll',
+        query : {
+            tenantid : task.root.info.tenant,
+            appname  : task.root.info.appid,
+            platform : 'web'
+        }
+    }));
+
+    promises.push(task.runSubTask({
+        type  : 'input',
+        kind  : 'multi',
         name  : 'userDefinition',
         uFld  : '_id',
         url   : 'api/tenant/getUserDefinition',
@@ -539,6 +552,7 @@ module.exports = function theSchema () {
                                     templateData: {
                                         appname:   appitem.name,
                                         apptitle:  appitem.title,
+                                        platform:  appitem.platform,
                                         appowner:  appitem.ownerId,
                                         tenantid:  task.root.info.tenant,
                                         server:   URL.format({
@@ -632,6 +646,18 @@ module.exports = function theSchema () {
                             type : 'file',
                             name : role._id,
                             cont : JSON.stringify(role, null, 4)
+                        }
+                    })
+                },
+
+                {
+                    type : 'dir',
+                    name : 'gc_templates',
+                    cont : task.root.input.gc_templates.map(function(gc_template){
+                        return {
+                            type : 'file',
+                            name : gc_template._id,
+                            cont : JSON.stringify(gc_template, null, 4)
                         }
                     })
                 },
