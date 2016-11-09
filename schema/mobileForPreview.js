@@ -33,7 +33,12 @@ module.exports = function theSchema () {
         request({
             method : 'POST',
             uri: task.server.settings.EXTERNAL_URL + '/studio/view/render',
-            json : {'view_source': JSON.parse(definition)}
+            json : {
+                'view_source': JSON.parse(definition),
+                'tenant_id': task.root.info.tenant,
+                'application': task.root.info.appid,
+                'platform': task.root.info.platform
+            }
 
         }, function (error, response, body) {
             if (error) {
