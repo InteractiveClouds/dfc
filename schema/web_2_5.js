@@ -516,7 +516,7 @@ module.exports = function theSchema () {
                         name : 'views',
                         cont : task.root.data.appitem.then(function(appitem){
                             return task.root.input.widgets.map(function(wdgt){
-                    
+
                                 return {
                                     type : 'file',
                                     name : wdgt.name + '.json',
@@ -928,7 +928,7 @@ function compileAppJs ( task ) {
         wScripts = '',
         wTemplts = '',
         wNames = [],
-        angularRoutes = '',
+        pScripts = '',
         angularServices = '',
         mobile_push_listener = '',
         platform = task.root.info.platform,
@@ -938,7 +938,7 @@ function compileAppJs ( task ) {
     var promise = task.root.input.widgets.map(function(wdgt){
 
         wScripts += '\n\n\n' +
-            '/* Widget: ' + wdgt.name + '*/' +
+            '/* View: ' + wdgt.name + '*/' +
             '\n' + wdgt.definition.src_script;
 
         wTemplts += '$scope.widget_template_' +
@@ -949,10 +949,8 @@ function compileAppJs ( task ) {
     });
 
     var promise_screens = task.root.input.screens.map(function(scr){
-        angularRoutes +=  TAB + '.when(\'/' + scr.name + '.html\', {' + CR +
-                    TAB + TAB + 'templateUrl : \'pages/' + scr.name + '.html\',' + CR +
-                    TAB + TAB + 'controller  : \'dfx_app_controller\'' + CR +
-                    TAB + '})' + CR
+        pScripts +=  '/* Screen: ' + scr.name + '*/' + CR +
+			+ scr.script + CR + CR;
     });
 
     var promise_queries = task.root.input.queries.map(function(query){
@@ -979,9 +977,9 @@ function compileAppJs ( task ) {
     });
 
     return Q.all([promise, promise_screens, promise_queries]).then( function(){
-        
+
         js_file_content += angularServices;
-        
+
         aScript += wNames.join(', ');
 
         /*if (platform == 'mobile') {
