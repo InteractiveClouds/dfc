@@ -1,7 +1,7 @@
 {
   "name": "dreamface-compiler",
   "description": "DreamFace Application Compiler",
-  "version": "1.0.2",
+  "version": "3.1.2",
   "contributors": [
     "Volodymyr Litichevskij <vova@interactive-clouds.com>",
     "Mikhail Tarasov <mikhail@interactive-clouds.com>",

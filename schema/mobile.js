@@ -797,7 +797,7 @@ function compileAppJs ( task ) {
         wScripts = '',
         wTemplts = '',
         wNames = [],
-        angularRoutes = '',
+        pScripts = '',
         angularServices = '',
         mobile_push_listener = '',
         platform = task.root.info.platform,
@@ -806,9 +806,9 @@ function compileAppJs ( task ) {
 
     var promise = task.root.input.widgets.map(function(wdgt){
 
-        wScripts += '\n\n\n' +
-        '/* Widget: ' + wdgt.name + '*/' +
-        '\n' + wdgt.definition.src_script;
+		wScripts += CR +
+            '/* View Controller: ' + wdgt.name + ' */' +
+            CR + CR + wdgt.definition.src_script + CR + CR;
 
         wTemplts += '$scope.widget_template_' +
         wdgt.name + ' = \'widgets/' +
@@ -822,10 +822,8 @@ function compileAppJs ( task ) {
     });
 
     var promise_screens = task.root.input.screens.map(function(scr){
-        angularRoutes +=  TAB + '.when(\'/' + scr.name + '.html\', {' + CR +
-        TAB + TAB + 'templateUrl : \'pages/' + scr.name + '.html\',' + CR +
-        TAB + TAB + 'controller  : \'dfx_app_controller\'' + CR +
-        TAB + '})' + CR
+		pScripts +=  CR + '/* Screen Controller: ' + scr.name + ' */' + CR +
+			CR + scr.script + CR + CR;
     });
 
     var promise_queries = task.root.input.queries.map(function(query){
@@ -853,81 +851,12 @@ function compileAppJs ( task ) {
 
     return Q.all([promise, promise_screens, promise_queries]).then( function(){
 
-        //js_file_content += angularServices;
-        js_file_content += 'var dfxAppRuntimeModules = [';
-        js_file_content += wNames.join(', ') + '];\n\n';
+		js_file_content += 'var dfxAppRuntimeModules = [';
+        js_file_content += wNames.join(', ') + ', \'dfxAppPages\'];' + CR + CR;
+		js_file_content += 'var dfxAppPages = angular.module(\'dfxAppPages\', [\'dfxAppServices\']);' + CR + CR;
 
-        //aScript += wNames.join(', ');
-
-        /*if (platform == 'mobile') {
-         mobile_push_listener +=
-         "window.addEventListener('push', function(event) {" +
-         "   var paramsObj = dfxGetJsonFromUrl();" +
-         "   var dfxPrevWidget = paramsObj.dfxPrevWidget;" +
-         "   delete paramsObj.dfxPrevWidget;" +
-
-         "   $scope.parameters = paramsObj;" +
-
-         "   if (dfxPrevWidget) {" +
-         "       $('#back-nav').attr('href', dfxPrevWidget + '.html');" +
-         "       $('#main-menu-opener').toggle();" +
-         "       $('#back-nav').toggle();" +
-         "   } else {" +
-         "       dfxMobileActivateMainMenu();" +
-         "   }" +
-
-         "   $compile(angular.element($('.content')))($scope);" +
-         "});";
-         }*/
-
-
-        //js_file_content += aScript + ',\'dfx.utils\'])\r\n';
-
-        /*js_file_content += '.config(function($routeProvider) {' + CR +
-         TAB + '$routeProvider' + CR +
-         TAB + '.when(\'/\', {' + CR +
-         TAB + TAB + 'templateUrl : \'pages/Home.html\',' + CR +
-         TAB + TAB + 'controller  : \'dfx_app_controller\'' + CR +
-         TAB + '})' + CR +
-         angularRoutes +
-         '})' + CR;*/
-
-        //js_file_content += '.run(function($rootScope) { $rootScope.user = $user; });\r\n\r\n';
-
-        /*js_file_content += appname
-         + ".controller('ScreenController', ['$scope', '$compile', function($scope, $compile) { " +
-         wTemplts + mobile_push_listener +
-         " dfScreenControllerDispatcher($scope);" +
-         " } ]);\r\n\r\n";*/
-
-        /*js_file_content += appname
-         + ".service('messageService', ['$rootScope', function($rootScope) {"
-         + "    return {"
-         + "        publish: function(name, parameters) {"
-         + "            $rootScope.$emit(name, parameters);"
-         + "        },"
-         + "        subscribe: function(name, listener) {"
-         + "            $rootScope.$on(name, listener);"
-         + "        }"
-         + "    };"
-         + "}]);";
-         */
-        /*
-         js_file_content += appname + ".directive('bindCompiledHtml', function( $compile, $timeout) {\n\r"
-         + "return { template: '<div></div>',scope: {rawHtml: '=bindCompiledHtml'},\n\r"
-         + "link: function(scope, elem, attrs) {\n\r"
-         + "scope.$watch('rawHtml', function(value) {\n\r"
-         + "if (!value) return;\n\r"
-         + "var new_elem = $compile(value)(scope.$parent);\n\r"
-         + "elem.contents().remove();\n\r"
-         + "elem.append(new_elem);\n\r"
-         + "});\n\r"
-         + "}\n\r"
-         + "};\n\r"
-         + "});\n\r\n\r";
-         */
-
-        js_file_content += wScripts;
+		js_file_content += pScripts;
+		js_file_content += wScripts;
 
         return js_file_content;
     });
