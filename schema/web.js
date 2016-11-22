@@ -269,6 +269,27 @@ module.exports = function theSchema () {
                             }
                         ]
                     },
+					{
+						type : 'dir',
+						name : 'commons',
+						cont : [
+							{
+								type : 'dir',
+								name : 'views',
+								cont : [
+									{
+										type : 'copy',
+										isPathAbsolute : true,
+										src : [
+											path.join(
+												PATH_TO_DEV_FILES,
+												'build/commons/views'
+											)
+										]}
+								]
+							}
+						]
+					},
                     {
                         type : 'dir',
                         name : 'css',
