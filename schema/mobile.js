@@ -380,6 +380,27 @@ module.exports = function theSchema () {
                         },
                         {
                             type : 'dir',
+                            name : 'commons',
+                            cont : [
+                                {
+                                    type : 'dir',
+                                    name : 'views',
+                                    cont : [
+                                        {
+                                            type : 'copy',
+                                            isPathAbsolute : true,
+                                            src : [
+                                                path.join(
+                                                    PATH_TO_DEV_FILES,
+                                                    'build/commons/views'
+                                                )
+                                            ]}
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            type : 'dir',
                             name : 'resources',
                             cont : [
                                 // app resources
@@ -794,6 +815,7 @@ function compileAppJs ( task ) {
     var appname = task.root.info.appid,
         TAB = '\t',
         CR = '\r\n',
+        aScripts = '',
         wScripts = '',
         wTemplts = '',
         wNames = [],
@@ -803,6 +825,10 @@ function compileAppJs ( task ) {
         platform = task.root.info.platform,
         js_file_content = '/* Application Scripts */\r\n\r\n',
         aScript  = 'var ' + appname + ' = angular.module(\'' + appname + '\', [ \'ngRoute\', \'dfxAppRuntime\', \'dfxAppServices\', \'dfxGControls\', ';
+
+    var promise_app = task.root.data.appitem.then( function(appitem) {
+        aScripts = appitem.scriptMobile;
+    });
 
     var promise = task.root.input.widgets.map(function(wdgt){
 
@@ -855,7 +881,15 @@ function compileAppJs ( task ) {
         js_file_content += wNames.join(', ') + ', \'dfxAppPages\'];' + CR + CR;
 		js_file_content += 'var dfxAppPages = angular.module(\'dfxAppPages\', [\'dfxAppServices\']);' + CR + CR;
 
+        // Add Application Scripts
+        js_file_content += '/* Application Main Controller */' + CR + CR;
+        js_file_content += 'var dfxApplication = angular.module(\'dfxApplication\', [\'dfxAppServices\']);' + CR + CR;
+        js_file_content += aScripts + CR + CR;
+
+        // Add Pages Script
 		js_file_content += pScripts;
+
+        // Add Views Script
 		js_file_content += wScripts;
 
         return js_file_content;
