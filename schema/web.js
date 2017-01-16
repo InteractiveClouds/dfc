@@ -236,7 +236,6 @@ module.exports = function theSchema () {
 
     // --------------------------------------------------------------- files structure
 
-
     promises.push(task.runSubTask({
         type : 'dir',
         name : '.',
@@ -584,6 +583,20 @@ module.exports = function theSchema () {
                         cont : JSON.stringify(applicationConfiguration, null, 4)
                     }
                 })
+            },
+
+            {
+                type : 'dir',
+                name : 'applications',
+                cont : [
+                    task.root.data.appitem.then(function(app){
+                        return {
+                            type : 'file',
+                            name : app._id,
+                            cont : JSON.stringify(app, null, 4)
+                        }
+                    })
+                ]
             },
 
             {

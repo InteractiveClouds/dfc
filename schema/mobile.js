@@ -637,6 +637,20 @@ module.exports = function theSchema () {
 
                 {
                     type : 'dir',
+                    name : 'applications',
+                    cont : [
+                        task.root.data.appitem.then(function(app){
+                            return {
+                                type : 'file',
+                                name : app._id,
+                                cont : JSON.stringify(app, null, 4)
+                            }
+                        })
+                    ]
+                },
+
+                {
+                    type : 'dir',
                     name : 'dataqueries',
                     cont : task.root.input.queries.map(function(query){
                         return {
