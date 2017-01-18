@@ -538,6 +538,8 @@ module.exports = function theSchema () {
                                                     apptitle:  appitem.title,
                                                     googleMapAPIKey: googleMapAPIKey,
                                                     loadGoogleMap: loadGoogleMap,
+                                                    appSecurity: appitem.security,
+                                                    platform:  appitem.platform,
                                                     appowner:  appitem.ownerId,
                                                     tenantid:  task.root.info.tenant,
                                                     server:   URL.format({

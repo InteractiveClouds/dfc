@@ -518,6 +518,7 @@ module.exports = function theSchema () {
                                         templateData: {
                                             appname:   appitem.name,
                                             apptitle:  appitem.title,
+                                            appSecurity: appitem.security,
                                             platform:  appitem.platform,
                                             googleMapAPIKey: googleMapAPIKey,
                                             loadGoogleMap: loadGoogleMap,
