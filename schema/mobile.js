@@ -33,7 +33,12 @@ module.exports = function theSchema () {
         request({
             method : 'POST',
             uri: task.server.settings.EXTERNAL_URL + '/studio/view/render',
-            json : {'view_source': JSON.parse(definition)}
+            json : {
+                'view_source': JSON.parse(definition),
+                'tenant_id': task.root.info.tenant,
+                'application': task.root.info.appid,
+                'platform': task.root.info.platform
+            }
 
         }, function (error, response, body) {
             if (error) {
@@ -122,6 +127,19 @@ module.exports = function theSchema () {
         query : {
             tenantid : task.root.info.tenant,
             application  : task.root.info.appid
+        }
+    }));
+
+    promises.push(task.runSubTask({
+        type  : 'input',
+        kind  : 'multi',
+        name  : 'gc_templates',
+        uFld  : '_id',
+        url   : 'api/gc_templates/getAll',
+        query : {
+            tenantid : task.root.info.tenant,
+            appname  : task.root.info.appid,
+            platform : 'web'
         }
     }));
 
@@ -362,6 +380,27 @@ module.exports = function theSchema () {
                         },
                         {
                             type : 'dir',
+                            name : 'commons',
+                            cont : [
+                                {
+                                    type : 'dir',
+                                    name : 'views',
+                                    cont : [
+                                        {
+                                            type : 'copy',
+                                            isPathAbsolute : true,
+                                            src : [
+                                                path.join(
+                                                    PATH_TO_DEV_FILES,
+                                                    'build/commons/views'
+                                                )
+                                            ]}
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            type : 'dir',
                             name : 'resources',
                             cont : [
                                 // app resources
@@ -499,6 +538,8 @@ module.exports = function theSchema () {
                                                     apptitle:  appitem.title,
                                                     googleMapAPIKey: googleMapAPIKey,
                                                     loadGoogleMap: loadGoogleMap,
+                                                    appSecurity: appitem.security,
+                                                    platform:  appitem.platform,
                                                     appowner:  appitem.ownerId,
                                                     tenantid:  task.root.info.tenant,
                                                     server:   URL.format({
@@ -534,6 +575,7 @@ module.exports = function theSchema () {
                                     templateData: {
                                         appname:   appitem.name,
                                         apptitle:  appitem.title,
+                                        platform:  appitem.platform,
                                         appowner:  appitem.ownerId,
                                         tenantid:  task.root.info.tenant,
                                         server:   URL.format({
@@ -597,6 +639,20 @@ module.exports = function theSchema () {
 
                 {
                     type : 'dir',
+                    name : 'applications',
+                    cont : [
+                        task.root.data.appitem.then(function(app){
+                            return {
+                                type : 'file',
+                                name : app._id,
+                                cont : JSON.stringify(app, null, 4)
+                            }
+                        })
+                    ]
+                },
+
+                {
+                    type : 'dir',
                     name : 'dataqueries',
                     cont : task.root.input.queries.map(function(query){
                         return {
@@ -627,6 +683,18 @@ module.exports = function theSchema () {
                             type : 'file',
                             name : role._id,
                             cont : JSON.stringify(role, null, 4)
+                        }
+                    })
+                },
+
+                {
+                    type : 'dir',
+                    name : 'gc_templates',
+                    cont : task.root.input.gc_templates.map(function(gc_template){
+                        return {
+                            type : 'file',
+                            name : gc_template._id,
+                            cont : JSON.stringify(gc_template, null, 4)
                         }
                     })
                 },
@@ -729,20 +797,51 @@ module.exports = function theSchema () {
                 });
             })
             .then(function(){
-                return  task.runSubTask({
-                    type : 'replace',
-                    rules : [
-                        {
-                            path : path.join(task.root.path, 'app','views'),
-                            find : "/assets/",
-                            replace : "resources/" + task.root.info.appid + "/assets/"
-                        },
-                        {
-                            path : path.join(task.root.path, 'app','js','mobile','runtime_mobile'),
-                            find : "/gcontrols/",
-                            replace : "gcontrols/"
-                        },
-                    ]
+                return task.root.data.appitem.then(function( currentApp ){
+                    var logo_img_path = currentApp.logo.split('/').pop();
+                    if (logo_img_path != 'dfx_login_logo_black.png') {
+                        return task.runSubTask({
+                            type: 'replace',
+                            rules: [
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/assets/",
+                                    replace: "resources/" + task.root.info.appid + "/assets/"
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/applicationLogo",
+                                    replace: "resources/" + task.root.info.appid + "/assets/" + logo_img_path
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'js', 'mobile', 'runtime_mobile'),
+                                    find: "/gcontrols/",
+                                    replace: "gcontrols/"
+                                },
+                            ]
+                        })
+                    } else {
+                        return task.runSubTask({
+                            type: 'replace',
+                            rules: [
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/assets/",
+                                    replace: "resources/" + task.root.info.appid + "/assets/"
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/applicationLogo",
+                                    replace: "img/" + logo_img_path
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'js', 'mobile', 'runtime_mobile'),
+                                    find: "/gcontrols/",
+                                    replace: "gcontrols/"
+                                },
+                            ]
+                        })
+                    }
                 });
             })
     );
@@ -763,6 +862,7 @@ function compileAppJs ( task ) {
     var appname = task.root.info.appid,
         TAB = '\t',
         CR = '\r\n',
+        aScripts = '',
         wScripts = '',
         wTemplts = '',
         wNames = [],
@@ -772,6 +872,10 @@ function compileAppJs ( task ) {
         platform = task.root.info.platform,
         js_file_content = '/* Application Scripts */\r\n\r\n',
         aScript  = 'var ' + appname + ' = angular.module(\'' + appname + '\', [ \'ngRoute\', \'dfxAppRuntime\', \'dfxAppServices\', \'dfxGControls\', ';
+
+    var promise_app = task.root.data.appitem.then( function(appitem) {
+        aScripts = appitem.scriptMobile;
+    });
 
     var promise = task.root.input.widgets.map(function(wdgt){
 
@@ -824,7 +928,15 @@ function compileAppJs ( task ) {
         js_file_content += wNames.join(', ') + ', \'dfxAppPages\'];' + CR + CR;
 		js_file_content += 'var dfxAppPages = angular.module(\'dfxAppPages\', [\'dfxAppServices\']);' + CR + CR;
 
+        // Add Application Scripts
+        js_file_content += '/* Application Main Controller */' + CR + CR;
+        js_file_content += 'var dfxApplication = angular.module(\'dfxApplication\', [\'dfxAppServices\']);' + CR + CR;
+        js_file_content += aScripts + CR + CR;
+
+        // Add Pages Script
 		js_file_content += pScripts;
+
+        // Add Views Script
 		js_file_content += wScripts;
 
         return js_file_content;
