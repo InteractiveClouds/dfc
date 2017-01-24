@@ -797,20 +797,51 @@ module.exports = function theSchema () {
                 });
             })
             .then(function(){
-                return  task.runSubTask({
-                    type : 'replace',
-                    rules : [
-                        {
-                            path : path.join(task.root.path, 'app','views'),
-                            find : "/assets/",
-                            replace : "resources/" + task.root.info.appid + "/assets/"
-                        },
-                        {
-                            path : path.join(task.root.path, 'app','js','mobile','runtime_mobile'),
-                            find : "/gcontrols/",
-                            replace : "gcontrols/"
-                        },
-                    ]
+                return task.root.data.appitem.then(function( currentApp ){
+                    var logo_img_path = currentApp.logo.split('/').pop();
+                    if (logo_img_path != 'dfx_login_logo_black.png') {
+                        return task.runSubTask({
+                            type: 'replace',
+                            rules: [
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/assets/",
+                                    replace: "resources/" + task.root.info.appid + "/assets/"
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/applicationLogo",
+                                    replace: "resources/" + task.root.info.appid + "/assets/" + logo_img_path
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'js', 'mobile', 'runtime_mobile'),
+                                    find: "/gcontrols/",
+                                    replace: "gcontrols/"
+                                },
+                            ]
+                        })
+                    } else {
+                        return task.runSubTask({
+                            type: 'replace',
+                            rules: [
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/assets/",
+                                    replace: "resources/" + task.root.info.appid + "/assets/"
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'views'),
+                                    find: "/applicationLogo",
+                                    replace: "img/" + logo_img_path
+                                },
+                                {
+                                    path: path.join(task.root.path, 'app', 'js', 'mobile', 'runtime_mobile'),
+                                    find: "/gcontrols/",
+                                    replace: "gcontrols/"
+                                },
+                            ]
+                        })
+                    }
                 });
             })
     );
